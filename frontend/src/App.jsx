@@ -67,7 +67,7 @@ export default function App() {
       >
         <h1
           style={{
-            marginBottom: '1.5em',
+            marginBottom: '0.5em',
             color: '#1e293b',
             fontSize: '1.75rem',
             fontWeight: '600',
@@ -76,6 +76,15 @@ export default function App() {
         >
           How Does an LLM Access the Internet?
         </h1>
+        <p
+          style={{
+            marginBottom: '1.5em',
+            color: '#475569',
+            fontSize: '1rem',
+          }}
+        >
+          This demo uses OpenAI’s <strong>gpt-4o-search-preview</strong> model to simulate real-time web-assisted answers.
+        </p>
         <form
           onSubmit={handleSubmit}
           style={{

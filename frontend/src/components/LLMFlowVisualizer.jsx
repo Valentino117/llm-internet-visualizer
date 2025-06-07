@@ -28,13 +28,13 @@ const steps = [
   {
     key: 'prepare',
     emoji: '🧩',
-    title: 'App Builds the Prompt for GPT-4',
+    title: 'App Builds the Prompt for GPT-4.1',
     description: 'Your app combines the search result content with your question into a single prompt for the model to understand.',
   },
   {
     key: 'llm',
     emoji: '🚀',
-    title: 'GPT-4 (on a GPU Cluster)',
+    title: 'GPT-4.1 (on a GPU Cluster)',
     description: 'The model receives both the results and the original question. Without accessing the internet, it generates an answer and sends it to the app.',
   },
   {
