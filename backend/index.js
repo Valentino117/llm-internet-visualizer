@@ -3,12 +3,17 @@ const cors = require('cors');
 const axios = require('axios');
 
 const app = express();
-const port = 3001;
+const port = process.env.PORT || 3001; // Use dynamic port for Render
 
-const SERPER_API_KEY = 'df7f55ceebb3883b4ce8ab961badc31ae1c59757'; // Replace with your real key
+const SERPER_API_KEY = 'df7f55ceebb3883b4ce8ab961badc31ae1c59757'; // Replace with environment variable in production
 
 app.use(cors());
 app.use(express.json());
+
+// ➕ New root route to fix "Cannot GET /"
+app.get('/', (req, res) => {
+  res.send('🟢 Backend is running and ready for API requests.');
+});
 
 async function searchWeb(query) {
   const res = await axios.post(
