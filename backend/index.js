@@ -4,72 +4,46 @@ const axios = require('axios');
 require('dotenv').config();
 
 const app = express();
-const port = process.env.PORT || 3001;
-
-const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
-const SERPER_API_KEY = process.env.SERPER_API_KEY;
+const port = 3001;
 
 app.use(cors());
 app.use(express.json());
 
-async function searchWeb(query) {
-  const res = await axios.post(
-    'https://google.serper.dev/search',
-    { q: query },
-    {
-      headers: {
-        'X-API-KEY': SERPER_API_KEY,
-        'Content-Type': 'application/json',
-      },
-    }
-  );
-
-  const topResult = res.data.organic?.[0]?.snippet || "No results found.";
-  return topResult;
-}
-
-async function callOpenAI(prompt, searchResults) {
-  const response = await axios.post(
-    'https://api.openai.com/v1/chat/completions',
-    {
-      model: 'gpt-4o-search-preview',
-      messages: [
-        {
-          role: 'system',
-          content: 'You are a concise assistant. Use the provided search result to answer the question clearly and briefly.',
-        },
-        {
-          role: 'user',
-          content: `Question: ${prompt}\n\nSearch Result: ${searchResults}`,
-        },
-      ],
-      max_tokens: 150,
-    },
-    {
-      headers: {
-        Authorization: `Bearer ${OPENAI_API_KEY}`,
-        'Content-Type': 'application/json',
-      },
-    }
-  );
-
-  return response.data.choices[0].message.content.trim();
-}
+const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
 
 app.post('/api/ask', async (req, res) => {
+  const { prompt } = req.body;
+
   try {
-    const { prompt } = req.body;
+    const openaiResponse = await axios.post(
+      'https://api.openai.com/v1/chat/completions',
+      {
+        model: 'gpt-4o',
+        messages: [
+          {
+            role: 'user',
+            content: `Answer this briefly in ~3 sentences: ${prompt}`,
+          },
+        ],
+        tools: [{ type: 'retrieval' }],
+        tool_choice: 'auto',
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${OPENAI_API_KEY}`,
+          'Content-Type': 'application/json',
+        },
+      }
+    );
 
-    const searchResult = await searchWeb(prompt);
-    const openaiAnswer = await callOpenAI(prompt, searchResult);
-
-    res.json({ answer: openaiAnswer });
-  } catch (error) {
-    console.error('Error:', error.message);
-    res.status(500).json({ error: 'Something went wrong.' });
+    const answer = openaiResponse.data.choices?.[0]?.message?.content || "No answer returned.";
+    res.json({ answer });
+  } catch (err) {
+    console.error('Error fetching from OpenAI:', err.response?.data || err.message);
+    res.status(500).json({ answer: "Sorry, something went wrong when contacting the model." });
   }
 });
 
 app.listen(port, () => {
-  console.log(`🟢 Backend is running on port ${port}`);
+  console.log(`🟢 Backend is running on http://localhost:${port}`);
 });

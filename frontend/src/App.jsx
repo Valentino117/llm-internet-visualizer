@@ -7,20 +7,21 @@ export default function App() {
 
   async function handleSubmit(e) {
     e.preventDefault();
-    const prompt = e.target.elements.prompt.value;
-
+    const prompt = e.target.elements.prompt.value.trim();
     if (!prompt) return;
 
     setResponse(null);
 
+    const delay = (ms) => new Promise((r) => setTimeout(r, ms));
+
     setStage("prompt");
-    await new Promise((r) => setTimeout(r, 300));
+    await delay(300);
 
     setStage("receive");
-    await new Promise((r) => setTimeout(r, 300));
+    await delay(300);
 
     setStage("call");
-    await new Promise((r) => setTimeout(r, 300));
+    await delay(300);
 
     const res = await fetch('https://llm-internet-visualizer.onrender.com/api/ask', {
       method: 'POST',
@@ -28,21 +29,16 @@ export default function App() {
       body: JSON.stringify({ prompt }),
     });
 
-    if (!res.ok) {
-      setStage("error");
-      return;
-    }
-
     const data = await res.json();
 
     setStage("result");
-    await new Promise((r) => setTimeout(r, 300));
+    await delay(300);
 
     setStage("prepare");
-    await new Promise((r) => setTimeout(r, 300));
+    await delay(300);
 
     setStage("llm");
-    await new Promise((r) => setTimeout(r, 500));
+    await delay(500);
 
     setResponse(data);
     setStage("done");
@@ -82,7 +78,7 @@ export default function App() {
             lineHeight: '1.2',
           }}
         >
-          How Does an LLM Access the Internet? (powered by GPT-4o)
+          How Does an LLM Access the Internet?
         </h1>
         <form
           onSubmit={handleSubmit}
@@ -123,6 +119,9 @@ export default function App() {
           </button>
         </form>
         <LLMFlowVisualizer stage={stage} response={response} />
+        <p style={{ marginTop: '2em', fontSize: '0.9em', color: '#64748b' }}>
+          Powered by GPT-4o with real-time web access (gpt-4o-search-preview)
+        </p>
       </div>
     </div>
   );
