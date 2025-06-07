@@ -35,10 +35,10 @@ const steps = [
     id: "done",
     title: "✅ Model’s Answer",
     description: "Your app receives the model’s response and sends it back to you in the browser.",
-  }
+  },
 ];
 
-const stageIndex = (current) => steps.findIndex(s => s.key === current);
+const stageIndex = (current) => steps.findIndex(s => s.id === current);
 
 export default function LLMFlowVisualizer({ stage, response }) {
   const currentIndex = stageIndex(stage);
@@ -73,12 +73,12 @@ export default function LLMFlowVisualizer({ stage, response }) {
       </div>
 
       {steps.map((step, index) => {
-        const isActive = step.key === stage;
+        const isActive = step.id === stage;
         const isPast = index < currentIndex;
 
         return (
           <div
-            key={step.key}
+            key={step.id}
             style={{
               position: 'relative',
               padding: '1em',
@@ -100,7 +100,7 @@ export default function LLMFlowVisualizer({ stage, response }) {
             }}
           >
             <div style={{ fontSize: '1.25em' }}>
-              {step.emoji} <strong>{step.title}</strong>
+              {step.title}
             </div>
             <div style={{ marginTop: '0.4em' }}>{step.description}</div>
           </div>
