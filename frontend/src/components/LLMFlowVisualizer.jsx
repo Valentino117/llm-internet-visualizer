@@ -2,47 +2,40 @@ import React from 'react';
 
 const steps = [
   {
-    key: 'prompt',
-    emoji: '🧑‍💻',
-    title: 'You',
-    description: 'You typed a question like “What’s the latest on AI regulation?”',
+    id: "prompt",
+    title: "🧠 User Prompt",
+    description: "You ask a question in natural language. Your app receives it and decides it needs internet data to answer.",
   },
   {
-    key: 'receive',
-    emoji: '🖥️',
-    title: 'Your App (on a CPU)',
-    description: 'The app receives your question and decides it needs more information.',
+    id: "receive",
+    title: "🖥️ Your App (on a CPU)",
+    description: "Your app receives the question and determines it needs web context. It prepares a tool call for web search.",
   },
   {
-    key: 'call',
-    emoji: '🌐',
-    title: 'App Calls the Web',
-    description: 'The app sends a secure internet access request to a search API like Bing or Google.',
+    id: "call",
+    title: "🌐 App Calls the Web",
+    description: "The app sends a secure search request via gpt-4o-search-preview’s built-in tool calling system.",
   },
   {
-    key: 'result',
-    emoji: '📄',
-    title: 'Search Results Received',
-    description: "The internet responds with the content of a specific website. Your app extracts what's useful from the results.",
+    id: "result",
+    title: "📄 Search Results Received",
+    description: "OpenAI fetches search results, extracts relevant snippets, and sends them back to your app.",
   },
   {
-    key: 'prepare',
-    emoji: '🧩',
-    title: 'App Builds the Prompt for GPT-4.1',
-    description: 'Your app combines the search result content with your question into a single prompt for the model to understand.',
+    id: "prepare",
+    title: "📦 Prompt Assembled",
+    description: "Your app combines the question and the search results into a single prompt for the model to process.",
   },
   {
-    key: 'llm',
-    emoji: '🚀',
-    title: 'GPT-4.1 (on a GPU Cluster)',
-    description: 'The model receives both the results and the original question. Without accessing the internet, it generates an answer and sends it to the app.',
+    id: "llm",
+    title: "🧠 GPT-4.1 (on GPU)",
+    description: "The model runs on a GPU cluster. It cannot browse, but uses the provided info to generate an answer.",
   },
   {
-    key: 'done',
-    emoji: '💬',
-    title: 'Final Answer',
-    description: 'The app receives the model’s answer and shows it to you!',
-  },
+    id: "done",
+    title: "✅ Model’s Answer",
+    description: "Your app receives the model’s response and sends it back to you in the browser.",
+  }
 ];
 
 const stageIndex = (current) => steps.findIndex(s => s.key === current);
