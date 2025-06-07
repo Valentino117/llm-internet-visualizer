@@ -9,7 +9,10 @@ export default function App() {
     e.preventDefault();
     const prompt = e.target.elements.prompt.value;
 
+    if (!prompt) return;
+
     setResponse(null);
+
     setStage("prompt");
     await new Promise((r) => setTimeout(r, 300));
 
@@ -25,10 +28,15 @@ export default function App() {
       body: JSON.stringify({ prompt }),
     });
 
-    setStage("result");
-    await new Promise((r) => setTimeout(r, 300));
+    if (!res.ok) {
+      setStage("error");
+      return;
+    }
 
     const data = await res.json();
+
+    setStage("result");
+    await new Promise((r) => setTimeout(r, 300));
 
     setStage("prepare");
     await new Promise((r) => setTimeout(r, 300));
@@ -67,24 +75,15 @@ export default function App() {
       >
         <h1
           style={{
-            marginBottom: '0.5em',
+            marginBottom: '1.5em',
             color: '#1e293b',
             fontSize: '1.75rem',
             fontWeight: '600',
             lineHeight: '1.2',
           }}
         >
-          How Does an LLM Access the Internet?
+          How Does an LLM Access the Internet? (powered by GPT-4o)
         </h1>
-        <p
-          style={{
-            marginBottom: '1.5em',
-            color: '#475569',
-            fontSize: '1rem',
-          }}
-        >
-          This demo uses OpenAI’s <strong>gpt-4o-search-preview</strong> model to simulate real-time web-assisted answers.
-        </p>
         <form
           onSubmit={handleSubmit}
           style={{
