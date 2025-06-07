@@ -6,27 +6,31 @@ require('dotenv').config();
 const app = express();
 const port = 3001;
 
+const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
+
 app.use(cors());
 app.use(express.json());
-
-const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
 
 app.post('/api/ask', async (req, res) => {
   const { prompt } = req.body;
 
   try {
-    const openaiResponse = await axios.post(
+    const openaiRes = await axios.post(
       'https://api.openai.com/v1/chat/completions',
       {
-        model: 'gpt-4o',
+        model: "gpt-4o-search-preview",
         messages: [
           {
-            role: 'user',
-            content: `Answer this briefly in ~3 sentences: ${prompt}`,
+            role: "system",
+            content: "You're a helpful assistant. Answer concisely using real-time web results if needed.",
+          },
+          {
+            role: "user",
+            content: prompt,
           },
         ],
-        tools: [{ type: 'retrieval' }],
-        tool_choice: 'auto',
+        max_tokens: 300,
+        temperature: 0.7,
       },
       {
         headers: {
@@ -36,10 +40,10 @@ app.post('/api/ask', async (req, res) => {
       }
     );
 
-    const answer = openaiResponse.data.choices?.[0]?.message?.content || "No answer returned.";
+    const answer = openaiRes.data.choices[0].message.content;
     res.json({ answer });
-  } catch (err) {
-    console.error('Error fetching from OpenAI:', err.response?.data || err.message);
+  } catch (error) {
+    console.error('Error fetching from OpenAI:', error.response?.data || error.message);
     res.status(500).json({ answer: "Sorry, something went wrong when contacting the model." });
   }
 });
